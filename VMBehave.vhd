@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 
 entity VMBehave is
   generic (delay: time := 2 ns);
-  port(D, N : in std_logic := '0';
+  port(D, N, clk: in std_logic := '0';
        rtn_nickel, disp_drink : out std_logic := '0');
 end VMBehave;
 
@@ -84,10 +84,12 @@ begin
       disp_drink <= output(0); -- lsb;
     end process;
 
-    -- update the current state process
-    process(next_state)
+    -- update the current state with the next state on clk event
+    process(clk)
     begin
-      state <= next_state after delay;
+      if(clk'event and clk='1') then --rising edge
+        state <= next_state; -- after delay
+      end if;
     end process;
 
 end VMBehave_arch;
