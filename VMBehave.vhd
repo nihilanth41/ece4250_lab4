@@ -3,8 +3,8 @@ use ieee.std_logic_1164.all;
 
 entity VMBehave is
   generic (delay: time := 2 ns);
-  port(D, N : in std_logic;
-       rtn_nickel, disp_drink : out std_logic);
+  port(D, N : in std_logic := '0';
+       rtn_nickel, disp_drink : out std_logic := '0');
 end VMBehave;
 
 architecture VMBehave_arch of VMBehave is
