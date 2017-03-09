@@ -29,22 +29,36 @@ begin -- concurrent statements
   
   clk_process : process 
   begin 
-    for i in 0 to 5 loop
       wait for clk_delay;
       clk <= not clk;
-    end loop;
   end process;
   
   test_process : process
   begin
+    
+    -- Test two dimes case
     for i in 0 to 2 loop
       d <= not d;
       wait for 100 ns;
     end loop;
     assert(rtn_nickel='0' and disp_drink='1')
-      report "Wrong answer"
+      report "Wrong answer $0.10 + $0.10"
       severity error;
-    -- else
+    
+    -- Test dime, nickel, dime
+    d <= '1';
+    wait for 100 ns;
+    d <= '0';
+    n <= '1';
+    wait for 100 ns;
+    n <= '0';
+    d <= '1';
+    wait for 100 ns;
+    d <= '0';
+    assert(rtn_nickel='1' and disp_drink='1')
+      report "Wrong answer $0.10 + $0.05 + $0.10"
+      severity error;
+    
     report "Test Finished";
   end process;
   
