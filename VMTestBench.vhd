@@ -3,37 +3,49 @@ use IEEE.std_logic_1164.all;
 use IEEE.std_logic_arith.all;
 use IEEE.std_logic_unsigned.all;
 
-entity VMTestBench is
-  port ( D, N, rtn_nickel, disp_drink : out std_logic ); 
-end VMTestBench
-  
-  architecture behavior of VMTestBench is
-    -- Array[16] of 4-bit vectors
-    type ROM is array(0 to 15) of std_logic_vector(3 downto 0);
-      -- Array of expected results for i=0 through i=11
-      constant input_arr : ROM := (
-      constant output_results : ROM := ("0000", "0100", "1000", "1111", "0100", "1000", "1100", "1111", "1000", "1100", "0001", "1111", "1100", "0001", "0011", "1111");
+-- entity for Vending Machine test bench. No port declarations.
+entity VMTestBench_behave is
+  generic (clk_delay: time := 50 ns);
+end VMTestBench_behave;
 
-  component VMROM
-    port( D, N : in std_logic;
-          rtn_nickel, disp_drink : out std_logic;
-          clk : in std_logic);
+architecture VMTestBench_behave_arch of VMTestBench_behave is
+  -- component declaration for unit under test (UUT)
+  component VMBehave is
+    port(D, N, clk : in std_logic := '0';
+         rtn_nickel, disp_drink : out std_logic := '0');
   end component;
 
-  TEST_ROM_PROC: process
-    variable bits : std_logic_vector(3 downto 0) := "0000";
-  begin
-    for i in 0 to 15 loop
-      -- construct D,N from i
-      bits := bit_vector(TO_UNSIGNED(i, 4));
-      D <=  
-    end loop
-      
-      
-      
-        
-
+  -- inputs -- initial value only simulation
+  signal d : std_logic := '0';
+  signal n : std_logic := '0';
+  signal clk : std_logic := '1';
+  -- outputs
+  signal rtn_nickel : std_logic := '0';
+  signal disp_drink : std_logic := '0';
+begin -- concurrent statements
   
-
-
-end behavior;                         -- Complete syntax
+  -- component instantiation
+  uut: VMBehave port map(clk => clk, D => d, N => n, rtn_nickel => rtn_nickel, disp_drink => disp_drink);
+  
+  clk_process : process 
+  begin 
+    for i in 0 to 5 loop
+      wait for clk_delay;
+      clk <= not clk;
+    end loop;
+  end process;
+  
+  test_process : process
+  begin
+    for i in 0 to 2 loop
+      d <= not d;
+      wait for 100 ns;
+    end loop;
+    assert(rtn_nickel='0' and disp_drink='1')
+      report "Wrong answer"
+      severity error;
+    -- else
+    report "Test Finished";
+  end process;
+  
+end VMTestBench_behave_arch;
