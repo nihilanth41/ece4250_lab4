@@ -3,16 +3,16 @@ use IEEE.std_logic_1164.all;
 --use IEEE.numeric_std.all;
 use IEEE.std_logic_arith.all;
 
-entity vending_machine is 
+entity VMROM is 
 
 port(D, N : in std_logic := '0';
 CLK : in STD_LOGIC := '1';
 rtn_nickel, disp_drink : out std_logic := '0'-- rtn_nickel if excess change was entered, display drink if >= $0.20 was entered
 );
 
-end vending_machine;
+end VMROM;
 
-architecture behave of vending_machine is
+architecture behave of VMROM is
 -- signals for present state and next state
 signal  next_state : std_logic_vector ( 1 downto 0 ) := "00"; -- 2 bit for 4 possible stages
 signal present_state :std_logic_vector( 1 downto 0) := "00";
@@ -45,8 +45,6 @@ Constant vending_machine_rom : ROM :=
 
 begin
 
-  process(CLK) 
-  begin
 
 
     element <= present_state(1) & present_state(0) & D & N;
@@ -56,9 +54,6 @@ begin
 
     rtn_nickel <= temp( 1 );
     disp_drink <= temp( 0 );
-
-
-  end process;
 
   PROCESS ( CLK )
   Begin
